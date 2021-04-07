@@ -27,7 +27,7 @@
 #include "ESP8266WiFiType.h"
 #include "ESP8266WiFiGeneric.h"
 #include "user_interface.h"
-
+#include "smartconfig.h"
 
 class ESP8266WiFiSTAClass {
         // ----------------------------------------------------------------------------------------------
@@ -98,6 +98,7 @@ class ESP8266WiFiSTAClass {
 
         bool beginWPSConfig(void);
         bool beginSmartConfig();
+        bool beginSmartConfig(sc_callback_t userCallback);
         bool stopSmartConfig();
         bool smartConfigDone();
 
@@ -107,7 +108,7 @@ class ESP8266WiFiSTAClass {
         static bool _smartConfigDone;
 
         static void _smartConfigCallback(uint32_t status, void* result);
-
+        static sc_callback_t _smartConfigUserCallback;
 };
 
 
