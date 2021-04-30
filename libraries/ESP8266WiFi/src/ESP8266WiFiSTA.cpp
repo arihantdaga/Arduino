@@ -715,7 +715,15 @@ bool ESP8266WiFiSTAClass::_smartConfigDone = false;
 
 /**
  * Start SmartConfig
+ * @param userCallback
+ * @return smart config start success
  */
+
+bool ESP8266WiFiSTAClass::beginSmartConfig(sc_callback_t userCallback) {
+    _smartConfigUserCallback = userCallback;
+    return beginSmartConfig();
+}
+
 bool ESP8266WiFiSTAClass::beginSmartConfig() {
     if(_smartConfigStarted) {
         return false;
@@ -773,9 +781,22 @@ void ESP8266WiFiSTAClass::_smartConfigCallback(uint32_t st, void* result) {
     if(status == SC_STATUS_LINK) {
         station_config* sta_conf = reinterpret_cast<station_config*>(result);
 
-        wifi_station_set_config(sta_conf);
-        wifi_station_disconnect();
-        wifi_station_connect();
+        if(_smartConfigUserCallback) {
+            if(WiFi._persistent) {
+                wifi_station_set_config(sta_conf);
+            } else {
+                wifi_station_set_config_current(sta_conf);
+            }
+            _smartConfigUserCallback(status, sta_conf);
+        } else {
+            if(WiFi._persistent) {
+                wifi_station_set_config(sta_conf);
+            } else {
+                wifi_station_set_config_current(sta_conf);
+            }
+            wifi_station_disconnect();
+            wifi_station_connect();
+        }
 
         _smartConfigDone = true;
     } else if(status == SC_STATUS_LINK_OVER) {
