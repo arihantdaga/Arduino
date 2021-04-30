@@ -712,7 +712,7 @@ int32_t ESP8266WiFiSTAClass::RSSI(void) {
 
 bool ESP8266WiFiSTAClass::_smartConfigStarted = false;
 bool ESP8266WiFiSTAClass::_smartConfigDone = false;
-
+sc_callback_t ESP8266WiFiSTAClass::_smartConfigUserCallback;
 /**
  * Start SmartConfig
  * @param userCallback
